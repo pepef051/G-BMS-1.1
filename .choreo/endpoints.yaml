@@ -1,0 +1,29 @@
+# +required Version of the endpoint configuration YAML
+version: 0.1
+
+# +required List of endpoints to create
+endpoints:
+  - name: Project Read Endpoint
+    path: /project_1_0/read
+    method: GET
+    function: readProject
+    context: /
+
+  - name: Project Sync Endpoint
+    path: /project_1_0/sync
+    method: POST
+    function: syncProject
+    context: /
+
+  - name: User General Update Endpoint
+    path: /project_1_0/user-general-update
+    method: POST
+    function: updateUserGeneral
+    context: /
+
+  - name: Greeting Service
+    port: 3000
+    type: REST
+    networkVisibility: Project
+    context: /greeting
+    schemaFilePath: greeting_openapi.yaml
