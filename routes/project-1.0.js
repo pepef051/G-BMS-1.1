@@ -414,7 +414,116 @@ function localdate(){
       })
 
 
+//APP SYNC 
+      router.post('/app', async (req, res) => {
 
+        try{
+       
+          
+          const serialNumber = {};
+                serialNumber.serialNumber = req.body.serialNumber;
+
+                const payload = {};
+            //SERIAL NUMBER SEARCH
+            const exists = await Dbschema.exists(serialNumber);
+              
+            if(!exists){
+            throw new Error ('ERROR serialNumber NOT FOUND')
+            } else {
+
+              const query = await Dbschema.find(serialNumber);
+              
+              //filter and RESPONSE TO BMS 
+              payload.reset = query[0].reset;
+              payload.monitoring = query[0].monitoring;
+              payload.auto = query[0].auto;
+              payload.setPoint = query[0].setPoint;
+              payload.apiSyncTime = query[0].apiSyncTime;
+
+              payload.anagOutput0_10v_name = query[0].anagOutput0_10v.anagOutput0_10v_name;
+              payload.anagOutput0_10v_value = query[0].anagOutput0_10v.anagOutput0_10v_value;
+
+
+              payload.anagInput0_10v_name = query[0].anagInput0_10v.anagInput0_10v_name;
+              payload.anagInput0_10v_value = query[0].anagInput0_10v.anagInput0_10v_value.slice(-1)[0];
+
+              payload.stop = query[0].stop;
+              payload.Asset = query[0].Asset;
+              payload.location = query[0].location;
+              payload.link = query[0].link;
+
+              payload.output1_name = query[0].output1.output1_name;
+              payload.output1_state = query[0].output1.output1_state;
+
+              payload.output2_name = query[0].output2.output2_name;
+              payload.output2_state = query[0].output2.output2_state;
+
+              payload.output3_name = query[0].output3.output3_name;
+              payload.output3_state = query[0].output3.output3_state;
+              
+              payload.input1_name = query[0].input1.input1_name;
+              payload.input1_state = query[0].input1.input1_state;
+              
+              payload.input2_name = query[0].input2.input2_name;
+              payload.input2_state = query[0].input2.input2_state;
+              
+              payload.input3_name = query[0].input3.input3_name;
+              payload.input3_state = query[0].input3.input3_state;
+
+              payload.input4_name = query[0].input4.input4_name;
+              payload.input4_state = query[0].input4.input4_state;
+              
+              payload.input5_name = query[0].input5.input5_name;
+              payload.input5_state = query[0].input5.input5_state;
+              
+              payload.input6_name = query[0].input6.input6_name;
+              payload.input6_state = query[0].input6.input6_state;
+              
+              payload.input7_name = query[0].input7.input7_name;
+              payload.input7_state = query[0].input7.input7_state;
+              
+              payload.input8_name = query[0].input8.input8_name;
+              payload.input8_state = query[0].input8.input8_state;
+
+              payload.inputVSS_name = query[0].inputVSS.inputVSS_name;
+              payload.inputVSS_value = parseFloat(query[0].inputVSS.inputVSS_value.slice(-1)[0].toFixed(1));
+
+              payload.inputVS_name = query[0].inputVS.inputVS_name;
+              payload.inputVS_value = parseFloat(query[0].inputVS.inputVS_value.slice(-1)[0].toFixed(1));
+         
+
+              res.status(200).json(payload);
+
+              
+            }
+
+        
+
+        }
+        catch(Error){
+          console.error(`Error handling POST request at '/APP' : => ${Error}`);
+          res.status(400).json({message: Error.message});
+        }
+    
+      })
+
+
+      router.get('/serialNumber', (req, resp) => {
+        Dbschema.find({}, { serialNumber: 1, _id: 0 }) // Fetch only 'serialNumber', exclude '_id'
+          .then((res) => {
+            if (res.length > 0) {
+              resp.send(res); // Send all serial numbers found
+            } else {
+              resp.status(404).send("No serial numbers found");
+            }
+          })
+          .catch((err) => {
+            console.log("Error at /serialNumber", err);
+            resp.status(500).send("Error occurred while fetching serial numbers");
+          });
+      });
+      
+      
 
 
 
